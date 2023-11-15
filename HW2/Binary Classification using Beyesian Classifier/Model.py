@@ -46,8 +46,8 @@ class GaussianLinearClassifier:
 
     def predict_distance(self, X):
         mahalanobis_distances = [self.mahalanobis_distance(X, self.mu_mle[i], self.sigma_mle) for i in range(len(self.num_class))]
-        a = np.column_stack([mahalanobis_distances[i] for i in range(len(self.num_class))])
-        predictions = np.argmin(a, axis=1)
+        posteriors = np.column_stack([mahalanobis_distances[i] for i in range(len(self.num_class))])
+        predictions = np.argmin(posteriors, axis=1)
         return predictions
 
 class QuadraticDiscriminantAnalysis:
@@ -95,7 +95,7 @@ class QuadraticDiscriminantAnalysis:
     
     def predict_distance(self, X):
         mahalanobis_distances = [self.mahalanobis_distance(X, self.mu_mle[i], self.sigma_mle[i]) for i in range(len(self.num_class))]
-        a = np.column_stack([mahalanobis_distances[i] for i in range(len(self.num_class))])
-        predictions = np.argmin(a, axis=1)
+        posteriors = np.column_stack([mahalanobis_distances[i] for i in range(len(self.num_class))])
+        predictions = np.argmin(posteriors, axis=1)
         return predictions
 
