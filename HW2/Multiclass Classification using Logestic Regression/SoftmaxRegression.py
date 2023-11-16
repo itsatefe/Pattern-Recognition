@@ -33,7 +33,7 @@ class SoftmaxRegression:
         gradient = -X.T.dot(self._one_hot_encode(y) - probabilities) / m
         return gradient
 
-    def train(self, X, y, epsilon = 1e-5):
+    def train(self, X, y, epsilon = 1e-6):
         X_bias = np.c_[np.ones((X.shape[0], 1)), X]
         self.theta = np.zeros((X_bias.shape[1], self.num_classes))
 
