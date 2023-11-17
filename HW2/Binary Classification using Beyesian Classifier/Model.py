@@ -50,6 +50,7 @@ class GaussianLinearClassifier:
         predictions = np.argmin(posteriors, axis=1)
         return predictions
 
+
 class QuadraticDiscriminantAnalysis:
     def __init__(self):
         self.pi_mle = None
