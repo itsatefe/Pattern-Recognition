@@ -18,10 +18,12 @@ class SoftmaxRegression:
         exp_z = np.exp(z - np.max(z, axis=1, keepdims=True))
         return exp_z / np.sum(exp_z, axis=1, keepdims=True)
 
+    # The categorical cross-entropy loss.
     def _compute_cost(self, X, y, theta):
         m = len(y)
         scores = X.dot(theta)
         probabilities = self._softmax(scores)
+        # Multinomial distribution
         log_probabilities = -np.log(probabilities[range(m), y])
         cost = np.sum(log_probabilities) / m
         return cost
