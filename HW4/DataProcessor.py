@@ -24,7 +24,7 @@ class DataProcessor:
                 image_path = os.path.join(jaffe_path, image_file)
                 img = Image.open(image_path)
                 resized_img = img.resize(self.size)
-                output_filepath = os.path.join(output_path, image_file)
+#                 output_filepath = os.path.join(output_path, image_file)
 #                 resized_img.save(output_filepath)
 
                 img_array = np.array(resized_img).flatten()
@@ -69,6 +69,7 @@ class DataProcessor:
             self.data['Normalized_Image'] = demeaned_images
         else:
             print("Error: Mean image or images not available.")
+      #std
 
     def visualize_selected_images(self):
         if self.data is not None:
