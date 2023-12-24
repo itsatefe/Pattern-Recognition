@@ -4,7 +4,7 @@ import numpy as np
 from string import digits
 import pandas as pd
 import matplotlib.pyplot as plt
-
+from skimage import io, img_as_float
 
 class DataProcessor:
     def __init__(self, current_directory):
@@ -17,15 +17,16 @@ class DataProcessor:
         data = []
         jaffe_path = os.path.join(self.current_directory, 'jaffe')
         output_path = os.path.join(self.current_directory, 'resized_jaffe')
-#         os.makedirs(output_path, exist_ok=True)
+        # os.makedirs(output_path, exist_ok=True)
 
         for image_file in os.listdir(jaffe_path):
             try:
                 image_path = os.path.join(jaffe_path, image_file)
-                img = Image.open(image_path)
-                resized_img = img.resize(self.size)
-#                 output_filepath = os.path.join(output_path, image_file)
-#                 resized_img.save(output_filepath)
+                img = io.imread(image_path)
+                img = img_as_float(img)
+                resized_img = Image.fromarray(img).resize(self.size)
+                # output_filepath = os.path.join(output_path, image_file)
+                # resized_img.save(output_filepath)
 
                 img_array = np.array(resized_img).flatten()
                 remove_digits = str.maketrans('', '', digits)
@@ -43,7 +44,7 @@ class DataProcessor:
         self.data = pd.DataFrame(data)
 
     def plot_image(self, img, size):
-        image_array = img.reshape(size).astype(np.uint8)
+        image_array = img.reshape(size)
         plt.figure(figsize=(4, 4))
         plt.imshow(image_array, cmap='gray')
         plt.axis('off')
@@ -54,7 +55,7 @@ class DataProcessor:
             images = self.data['Image'].tolist()
             sum_images = np.zeros(len(images[0]))
             for img in images:
-                sum_images += img
+                sum_images += (img)
             self.mean_image = sum_images / len(images)
             self.plot_image(self.mean_image, self.size)
         else:
