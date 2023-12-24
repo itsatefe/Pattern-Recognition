@@ -69,8 +69,17 @@ class DataProcessor:
             self.data['Normalized_Image'] = demeaned_images
         else:
             print("Error: Mean image or images not available.")
-      #std
-
+            
+    def normalize_images(self):
+        if self.mean_image is not None and self.data is not None:
+                normalized_images = []
+                for img in self.data['Normalized_Image']:
+                    normalized_img = img / 255.0
+                    normalized_images.append(normalized_img)
+                self.data['Normalized_Image'] = normalized_images
+        else:
+            print("Error: Mean image or images not available.")
+        
     def visualize_selected_images(self):
         if self.data is not None:
             unique_classes = self.data['Expression'].unique()
