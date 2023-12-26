@@ -4,4 +4,4 @@ HW2 -> Multiclass Classification using Logestic Regression + Softmax, Binary Cla
 
 HW3 -> Density Disitribution Estimation (Histogram, KNN, Kernels (parzen-window, Gaussian))
 
-HW4 -> Dimensionality Reduction (PCA, Fisher's LDA)
+HW4 -> Dimensionality Reduction (PCA, Fisher's LDA) on JAFFE Dataset
