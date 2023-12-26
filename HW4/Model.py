@@ -59,4 +59,34 @@ class QuadraticDiscriminantAnalysis:
         posteriors = np.column_stack([mahalanobis_distances[i] for i in range(len(self.num_class))])
         predictions = np.argmin(posteriors, axis=1)
         return predictions
+    
+# Gaussian Naive Bayes Model
+class GaussianNaiveBayes:
+    def fit(self, X, y):
+        self.classes = np.unique(y)
+        self.means = {}
+        self.variances = {}
+        self.priors = {}
 
+        for c in self.classes:
+            X_c = X[y == c]
+            self.means[c] = np.mean(X_c, axis=0)
+            self.variances[c] = np.var(X_c, axis=0)
+            self.priors[c] = X_c.shape[0] / X.shape[0]
+    
+    def calculate_likelihood(self, x, mean, var):
+        exponent = np.exp(-(x - mean)**2 / (2 * var))
+        return (1 / np.sqrt(2 * np.pi * var)) * exponent
+
+    def predict_instance(self, x):
+        posteriors = []
+        for c in self.classes:
+            prior = np.log(self.priors[c])
+            epsilon = 1e-10
+            likelihood = np.sum(np.log(self.calculate_likelihood(x, self.means[c], self.variances[c]) + epsilon))
+            posterior = prior + likelihood
+            posteriors.append(posterior)
+        return self.classes[np.argmax(posteriors)]
+
+    def predict(self, X):
+        return [self.predict_instance(x) for x in X]
