@@ -50,7 +50,7 @@ class QuadraticDiscriminantAnalysis:
 
 
     def mahalanobis_distance(self, x, mean, covariance):
-        sigma_inv = np.linalg.inv(covariance)
+        sigma_inv = np.linalg.pinv(covariance)
         distances = [np.dot(np.dot((sample - mean), sigma_inv), (sample - mean).T) for sample in x]
         return distances
     
