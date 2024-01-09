@@ -22,7 +22,6 @@ class GaussianMixtureModel:
     def expectation_step(self, data):
         self.posteriors = np.zeros((self.n_samples, self.n_components))
         for i in range(self.n_components):
-            # Adding regularization term for numerical stability
             covar = self.covariances[i] + self.reg_covar * np.eye(self.n_features)
             self.posteriors[:, i] = self.weights[i] * multivariate_normal.pdf(data, mean=self.means[i], cov=covar)
         self.posteriors /= self.posteriors.sum(axis=1, keepdims=True)
@@ -59,3 +58,59 @@ class GaussianMixtureModel:
         self.expectation_step(data)
         return np.argmax(self.posteriors, axis=1)
 
+
+class KMeans:
+    def __init__(self, n_clusters=2, max_iter=100, random_state=None):
+        self.n_clusters = n_clusters
+        self.max_iter = max_iter
+        self.random_state = random_state
+        self.centroids = None
+        self.inertia_ = None  # Adding inertia attribute
+
+    def _initialize_centroids(self, X):
+        np.random.seed(self.random_state)
+        random_idx = np.random.permutation(X.shape[0])
+        centroids = X[random_idx[:self.n_clusters]]
+        return centroids
+
+    def _compute_distances(self, X, centroids):
+        distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
+        return distances
+
+    def _assign_clusters(self, distances):
+        return np.argmin(distances, axis=0)
+
+    def _update_centroids(self, X, labels):
+        centroids = np.array([X[labels == i].mean(axis=0) for i in range(self.n_clusters)])
+        return centroids
+
+    def fit(self, X):
+        self.centroids = self._initialize_centroids(X)
+        self.inertia_ = 0  # Initialize inertia
+
+        for _ in range(self.max_iter):
+            old_centroids = self.centroids
+            distances = self._compute_distances(X, old_centroids)
+            self.labels_ = self._assign_clusters(distances)
+            self.centroids = self._update_centroids(X, self.labels_)
+            self.inertia_ = self._compute_inertia(X, self.labels_)
+
+            if np.all(old_centroids == self.centroids):
+                break
+
+        return self
+
+    def _compute_inertia(self, X, labels):
+        inertia = 0
+        for i in range(self.n_clusters):
+            cluster_points = X[labels == i]
+            inertia += ((cluster_points - self.centroids[i]) ** 2).sum()
+        return inertia
+
+    def predict(self, X):
+        distances = self._compute_distances(X, self.centroids)
+        return self._assign_clusters(distances)
+
+    def fit_predict(self, X):
+        self.fit(X)
+        return self.labels_
