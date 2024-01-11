@@ -6,4 +6,4 @@ HW3 -> Density Disitribution Estimation (Histogram, KNN, Kernels (parzen-window,
 
 HW4 -> Dimensionality Reduction (PCA, Fisher's LDA) on JAFFE Dataset
 
-HW5 -> K-Means, GMM
+HW5 -> UnSuppervised learning (K-Means, GMM)
