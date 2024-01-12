@@ -7,21 +7,27 @@ class GaussianMixtureModel:
         self.max_iter = max_iter
         self.tol = tol
         self.reg_covar = reg_covar
-
+        
     def initialize_parameters(self, data):
-        kmeans = KMeans(n_clusters=self.n_components)
+        
+        kmeans = KMeans(n_clusters=self.n_components,random_state=42)
         labels = kmeans.fit_predict(data)
         self.means = kmeans.centroids
 
         self.n_samples, self.n_features = data.shape
         self.covariances = np.tile(np.eye(self.n_features), (self.n_components, 1, 1))
         self.weights = np.ones(self.n_components) / self.n_components
+        # covariance is full
+        self.num_params = self.n_components * (self.n_features + self.n_features * (self.n_features + 1) // 2) - 1
+
 
     def expectation_step(self, data):
-        self.posteriors = np.zeros((self.n_samples, self.n_components))
+        self.posteriors = np.zeros((data.shape[0], self.n_components))
         for i in range(self.n_components):
-            covar = self.covariances[i] + self.reg_covar * np.eye(self.n_features)
-            self.posteriors[:, i] = self.weights[i] * multivariate_normal.pdf(data, mean=self.means[i], cov=covar)
+            covar = self.covariances[i] + self.reg_covar * np.eye(data.shape[1])
+            likelihood = multivariate_normal.pdf(data, mean=self.means[i], cov=covar)
+            self.posteriors[:, i] = self.weights[i] * likelihood.reshape(-1)
+
         self.posteriors /= self.posteriors.sum(axis=1, keepdims=True)
 
     def maximization_step(self, data):
@@ -54,6 +60,15 @@ class GaussianMixtureModel:
     def predict(self, data):
         self.expectation_step(data)
         return np.argmax(self.posteriors, axis=1)
+    
+    # The lower the better
+    def bic(self, X):
+        penalty_term = self.num_params * np.log(self.n_samples)
+        return -2 * self.prev_log_likelihood * self.n_samples +  penalty_term
+
+     # The lower the better
+    def aic(self, X):
+        return -2 * self.prev_log_likelihood * self.n_samples + 2 * self.num_params
 
 
 class KMeans:
