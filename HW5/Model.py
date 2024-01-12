@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.stats import multivariate_normal
-from sklearn.cluster import KMeans
 
 class GaussianMixtureModel:
     def __init__(self, n_components, max_iter=100, tol=1e-4, reg_covar=1e-6):
@@ -10,10 +9,9 @@ class GaussianMixtureModel:
         self.reg_covar = reg_covar
 
     def initialize_parameters(self, data):
-        # Using KMeans for better initialization of means
-        kmeans = KMeans(n_clusters=self.n_components, n_init=1)
+        kmeans = KMeans(n_clusters=self.n_components)
         labels = kmeans.fit_predict(data)
-        self.means = kmeans.cluster_centers_
+        self.means = kmeans.centroids
 
         self.n_samples, self.n_features = data.shape
         self.covariances = np.tile(np.eye(self.n_features), (self.n_components, 1, 1))
@@ -32,7 +30,6 @@ class GaussianMixtureModel:
         for i in range(self.n_components):
             diff = data - self.means[i]
             covar = np.dot(self.posteriors[:, i] * diff.T, diff) / self.posteriors[:, i].sum()
-            # Adding regularization term for numerical stability
             self.covariances[i] = covar + self.reg_covar * np.eye(self.n_features)
 
     def fit(self, data):
@@ -65,7 +62,7 @@ class KMeans:
         self.max_iter = max_iter
         self.random_state = random_state
         self.centroids = None
-        self.inertia_ = None  # Adding inertia attribute
+        self.inertia_ = None 
 
     def _initialize_centroids(self, X):
         np.random.seed(self.random_state)
@@ -86,7 +83,7 @@ class KMeans:
 
     def fit(self, X):
         self.centroids = self._initialize_centroids(X)
-        self.inertia_ = 0  # Initialize inertia
+        self.inertia_ = 0
 
         for _ in range(self.max_iter):
             old_centroids = self.centroids
