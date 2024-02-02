@@ -23,12 +23,12 @@ class DatasetGenerator:
 
     def get_nonlinear_dataset(self, n_samples=500, noise=0.15, random_state=42):
         X_non_linear, y_non_linear = make_moons(n_samples=n_samples, noise=noise, random_state=random_state)
-        nonlinear_dataset = pd.DataFrame(X_non_linear, columns=['Feature 1', 'Feature 2'])
+        nonlinear_dataset = pd.DataFrame(X_non_linear, columns=['Feature1', 'Feature2'])
         nonlinear_dataset['Label'] = y_non_linear
-        X_nonlinear = nonlinear_dataset[['Feature 1', 'Feature 2']]
+        X_nonlinear = nonlinear_dataset[['Feature1', 'Feature2']]
         y_nonlinear = nonlinear_dataset['Label']
         scaler = StandardScaler()
         X_nonlinear_scaled = scaler.fit_transform(X_nonlinear)
-        nonlinear_dataset_scaled = pd.DataFrame(X_nonlinear_scaled, columns=['Feature 1', 'Feature 2'])
+        nonlinear_dataset_scaled = pd.DataFrame(X_nonlinear_scaled, columns=['Feature1', 'Feature2'])
         nonlinear_dataset_scaled['Label'] = y_nonlinear.reset_index(drop=True)
         return nonlinear_dataset_scaled
