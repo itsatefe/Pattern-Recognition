@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class LogisticRegression:
-    def __init__(self, learning_rate=0.001, num_iterations=20000):
+    def __init__(self, learning_rate=0.2, num_iterations=7000):
         self.learning_rate = learning_rate
         self.num_iterations = num_iterations
         self.theta = None
@@ -23,7 +23,7 @@ class LogisticRegression:
         self.theta = np.zeros(X_bias.shape[1])
         for i in range(self.num_iterations):
             h = self.sigmoid(X_bias.dot(self.theta))
-            gradient = X_bias.T.dot(y - h)
+            gradient = (1/m) * X_bias.T.dot(h - y)
             self.theta += self.learning_rate * gradient
             cost = self.compute_cost(X_bias, y, self.theta)
             self.cost_history.append(cost)
@@ -43,8 +43,11 @@ class LogisticRegression:
         y_pred_prob = self.sigmoid(X_bias.dot(self.theta))
         y_pred = (y_pred_prob >= 0.5).astype(int)
         return y_pred
-
-# In[ ]:
+    
+    def predict_probability(self,X):
+        X_bias = np.c_[np.ones((X.shape[0], 1)), X]
+        y_pred_prob = self.sigmoid(X_bias.dot(self.theta))
+        return y_pred_prob
 
 
 

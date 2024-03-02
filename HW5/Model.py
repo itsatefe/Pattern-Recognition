@@ -18,6 +18,7 @@ class GaussianMixtureModel:
         self.covariances = np.tile(np.eye(self.n_features), (self.n_components, 1, 1))
         self.weights = np.ones(self.n_components) / self.n_components
         # covariance is full
+        # n cluster, n means, n*n+1 / 2 cov
         self.num_params = self.n_components * (self.n_features + self.n_features * (self.n_features + 1) // 2) - 1
 
 
@@ -32,6 +33,7 @@ class GaussianMixtureModel:
 
     def maximization_step(self, data):
         self.weights = self.posteriors.mean(axis=0)
+        # centroids pf clusters
         self.means = np.dot(self.posteriors.T, data) / self.posteriors.sum(axis=0)[:, np.newaxis]
         for i in range(self.n_components):
             diff = data - self.means[i]
